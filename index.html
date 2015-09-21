@@ -1,0 +1,89 @@
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Stopwatch TDD</title>
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-1.18.0.css">
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+</head>
+
+<body>
+  <div id='main' style='padding: 2em;'>
+    <h1>Start the timer</h1>
+    <!-- <input type='text' id='price'> </input> -->
+  </div>
+
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="https://code.jquery.com/qunit/qunit-1.18.0.js"></script>
+
+  <script>
+    var T = (function() {
+      'use strict';
+
+      var timeElapsed = 0;
+      var timeStarted = 0;
+      var myTime;
+      // Initialize the application
+
+      var startTimer = function(startTime) {
+        timeStarted = startTime; // argument externally supplied
+        console.log("startTime: " + startTime);
+        myTime = setInterval(function() {
+          timeElapsed += 10;
+          console.log(timeElapsed)
+        }, 10);
+        //myTime;
+        return timeStarted;
+
+      };
+      //define a time counter, which updates every 10 milliseconds
+      var stopTimer = function() {
+        clearInterval(myTime)
+        myTime = false;
+        return timeElapsed;
+      };
+
+
+      return {
+        timeStarted: timeStarted,
+        timeElapsed: timeElapsed,
+        startTimer: startTimer,
+        stopTimer: stopTimer,
+      };
+
+
+    }());
+  </script>
+
+  <script>
+    test('The timer is zero before it is started', function(assert) {
+      console.log('1')
+      assert.equal(T.timeElapsed, 0, 'Message: timer is zero at start');
+    }); // use deepEqual for arrays see: https://api.qunitjs.com/deepEqual/
+
+    test("startTimer() starts counting from *NOW* (when instructed)", function(assert) {
+      var startTime = new Date().getTime();
+      console.log('2')
+      assert.equal(T.startTimer(startTime), startTime, true);
+    });
+
+    test('stopTimer() stops counting ', function(assert) {
+      T.startTimer();
+      var stopTest = function() {
+        setTimeout(T.stopTimer, 3000)
+      }
+      var newTime = stopTest();
+      var done = assert.async();
+      setTimeout(function() {
+        assert.equal(newTime, 3000, true);
+        done();
+      }, 4000)
+
+
+
+    });
+  </script>
+</body>
+
+</html>
